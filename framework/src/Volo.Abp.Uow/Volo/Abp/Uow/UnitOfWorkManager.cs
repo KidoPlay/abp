@@ -8,24 +8,25 @@ namespace Volo.Abp.Uow
     {
         public IUnitOfWork Current => GetCurrentUnitOfWork();
 
-        private readonly IServiceProvider _serviceProvider;
+        private readonly IHybridServiceScopeFactory _serviceScopeFactory;
         private readonly IAmbientUnitOfWork _ambientUnitOfWork;
 
         public UnitOfWorkManager(
-            IServiceProvider serviceProvider, 
-            IAmbientUnitOfWork ambientUnitOfWork)
+            IAmbientUnitOfWork ambientUnitOfWork, 
+            IHybridServiceScopeFactory serviceScopeFactory)
         {
-            _serviceProvider = serviceProvider;
             _ambientUnitOfWork = ambientUnitOfWork;
+            _serviceScopeFactory = serviceScopeFactory;
         }
 
         public IUnitOfWork Begin(UnitOfWorkOptions options, bool requiresNew = false)
         {
             Check.NotNull(options, nameof(options));
 
-            if (!requiresNew && _ambientUnitOfWork.UnitOfWork != null && !_ambientUnitOfWork.UnitOfWork.IsReserved)
+            var currentUow = Current;
+            if (currentUow != null && !requiresNew)
             {
-                return new ChildUnitOfWork(_ambientUnitOfWork.UnitOfWork);
+                return new ChildUnitOfWork(currentUow);
             }
 
             var unitOfWork = CreateNewUnitOfWork();
@@ -86,7 +87,7 @@ namespace Volo.Abp.Uow
             var uow = _ambientUnitOfWork.UnitOfWork;
 
             //Skip reserved unit of work
-            while (uow != null && uow.IsReserved)
+            while (uow != null && (uow.IsReserved || uow.IsDisposed || uow.IsCompleted))
             {
                 uow = uow.Outer;
             }
@@ -96,7 +97,7 @@ namespace Volo.Abp.Uow
 
         private IUnitOfWork CreateNewUnitOfWork()
         {
-            var scope = _serviceProvider.CreateScope();
+            var scope = _serviceScopeFactory.CreateScope();
             try
             {
                 var outerUow = _ambientUnitOfWork.UnitOfWork;

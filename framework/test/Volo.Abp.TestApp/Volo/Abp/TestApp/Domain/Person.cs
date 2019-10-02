@@ -23,8 +23,8 @@ namespace Volo.Abp.TestApp.Domain
         }
 
         public Person(Guid id, string name, int age, Guid? tenantId = null, Guid? cityId = null)
+            : base(id)
         {
-            Id = id;
             Name = name;
             Age = age;
             TenantId = tenantId;
@@ -39,7 +39,24 @@ namespace Volo.Abp.TestApp.Domain
 
             var oldName = Name;
             Name = name;
-            AddDomainEvent(new PersonNameChangedEvent{Person = this, OldName =  oldName});
+
+            AddLocalEvent(
+                new PersonNameChangedEvent
+                {
+                    Person = this,
+                    OldName = oldName
+                }
+            );
+
+            AddDistributedEvent(
+                new PersonNameChangedEto
+                {
+                    Id = Id,
+                    OldName = oldName,
+                    NewName = Name,
+                    TenantId = TenantId
+                }
+            );
         }
     }
 }

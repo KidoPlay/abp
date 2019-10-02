@@ -10,15 +10,16 @@ namespace Volo.Abp.BackgroundWorkers
         )]
     public class AbpBackgroundWorkersModule : AbpModule
     {
-
         public override void OnApplicationInitialization(ApplicationInitializationContext context)
         {
             var options = context.ServiceProvider.GetRequiredService<IOptions<BackgroundWorkerOptions>>().Value;
             if (options.IsEnabled)
             {
-                context.ServiceProvider
-                    .GetRequiredService<IBackgroundWorkerManager>()
-                    .Start();
+                AsyncHelper.RunSync(
+                    () => context.ServiceProvider
+                        .GetRequiredService<IBackgroundWorkerManager>()
+                        .StartAsync()
+                );
             }
         }
 
@@ -27,9 +28,11 @@ namespace Volo.Abp.BackgroundWorkers
             var options = context.ServiceProvider.GetRequiredService<IOptions<BackgroundWorkerOptions>>().Value;
             if (options.IsEnabled)
             {
-                context.ServiceProvider
-                    .GetRequiredService<IBackgroundWorkerManager>()
-                    .Stop();
+                AsyncHelper.RunSync(
+                    () => context.ServiceProvider
+                        .GetRequiredService<IBackgroundWorkerManager>()
+                        .StopAsync()
+                );
             }
         }
     }

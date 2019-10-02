@@ -1,8 +1,8 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using Volo.Abp.AspNetCore.Mvc.UI.Bootstrap;
+﻿using Volo.Abp.AspNetCore.Mvc.UI.Bootstrap;
 using Volo.Abp.AspNetCore.Mvc.UI.Bundling;
 using Volo.Abp.AspNetCore.Mvc.UI.Packages;
 using Volo.Abp.AspNetCore.Mvc.UI.Theme.Shared.Bundling;
+using Volo.Abp.AspNetCore.Mvc.UI.Widgets;
 using Volo.Abp.Modularity;
 using Volo.Abp.VirtualFileSystem;
 
@@ -10,18 +10,19 @@ namespace Volo.Abp.AspNetCore.Mvc.UI.Theme.Shared
 {
     [DependsOn(
         typeof(AbpAspNetCoreMvcUiBootstrapModule),
-        typeof(AbpAspNetCoreMvcUiPackagesModule)
+        typeof(AbpAspNetCoreMvcUiPackagesModule),
+        typeof(AbpAspNetCoreMvcUiWidgetsModule)
         )]
     public class AbpAspNetCoreMvcUiThemeSharedModule : AbpModule
     {
         public override void ConfigureServices(ServiceConfigurationContext context)
         {
-            context.Services.Configure<VirtualFileSystemOptions>(options =>
+            Configure<VirtualFileSystemOptions>(options =>
             {
                 options.FileSets.AddEmbedded<AbpAspNetCoreMvcUiThemeSharedModule>("Volo.Abp.AspNetCore.Mvc.UI.Theme.Shared");
             });
 
-            context.Services.Configure<BundlingOptions>(options =>
+            Configure<BundlingOptions>(options =>
             {
                 options
                     .StyleBundles

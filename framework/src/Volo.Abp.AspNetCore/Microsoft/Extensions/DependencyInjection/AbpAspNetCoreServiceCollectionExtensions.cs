@@ -5,20 +5,20 @@ namespace Microsoft.Extensions.DependencyInjection
 {
     public static class AbpAspNetCoreServiceCollectionExtensions
     {
-        public static IHostingEnvironment GetHostingEnvironment(this IServiceCollection services)
+        public static IWebHostEnvironment GetHostingEnvironment(this IServiceCollection services)
         {
-            return services.GetSingletonInstance<IHostingEnvironment>();
+            return services.GetSingletonInstance<IWebHostEnvironment>();
         }
 
-        public static IConfigurationRoot BuildConfiguration(this IServiceCollection services, string fileName = "appsettings")
+        public static IConfigurationRoot BuildConfiguration(this IServiceCollection services, ConfigurationBuilderOptions options = null)
         {
-            return services.GetHostingEnvironment().BuildConfiguration(fileName);
+            return services.GetHostingEnvironment().BuildConfiguration(options);
         }
 
-        public static IConfigurationRoot AddConfiguration(this IServiceCollection services, string fileName = "appsettings")
+        public static IConfigurationRoot AddConfiguration(this IServiceCollection services, ConfigurationBuilderOptions options = null)
         {
-            var configuration = services.BuildConfiguration(fileName);
-            services.AddConfiguration(configuration);
+            var configuration = services.BuildConfiguration(options);
+            services.SetConfiguration(configuration);
             return configuration;
         }
     }

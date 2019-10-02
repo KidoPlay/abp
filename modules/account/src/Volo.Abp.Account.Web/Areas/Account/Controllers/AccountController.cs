@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -8,6 +7,7 @@ using Volo.Abp.AspNetCore.Mvc;
 using Volo.Abp.Identity;
 using SignInResult = Microsoft.AspNetCore.Identity.SignInResult;
 using UserLoginInfo = Volo.Abp.Account.Web.Areas.Account.Controllers.Models.UserLoginInfo;
+using IdentityUser = Volo.Abp.Identity.IdentityUser;
 
 namespace Volo.Abp.Account.Web.Areas.Account.Controllers
 {
@@ -47,6 +47,12 @@ namespace Volo.Abp.Account.Web.Areas.Account.Controllers
         {
             ValidateLoginInfo(login);
             var identityUser = await _userManager.FindByNameAsync(login.UserNameOrEmailAddress);
+
+            if (identityUser == null)
+            {
+                return new AbpLoginResult(LoginResultType.InvalidUserNameOrPassword);
+            }
+
             return GetAbpLoginResult(await _signInManager.CheckPasswordSignInAsync(identityUser, login.Password, true));
         }
 

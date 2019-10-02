@@ -4,8 +4,8 @@ using System.Linq;
 using System.Reflection;
 using JetBrains.Annotations;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ActionConstraints;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
-using Microsoft.AspNetCore.Mvc.Internal;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.Extensions.Options;
 using Volo.Abp.Application.Services;
@@ -233,11 +233,11 @@ namespace Volo.Abp.AspNetCore.Mvc.Conventions
             var controllerSetting = GetControllerSettingOrNull(controllerType);
             if (controllerSetting?.RootPath != null)
             {
-                return GetControllerSettingOrNull(controllerType)?.RootPath;
+                return controllerSetting.RootPath;
             }
 
             var areaAttribute = controllerType.GetCustomAttributes().OfType<AreaAttribute>().FirstOrDefault();
-            if (areaAttribute.RouteValue != null)
+            if (areaAttribute?.RouteValue != null)
             {
                 return areaAttribute.RouteValue;
             }

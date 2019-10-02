@@ -12,7 +12,8 @@ namespace Volo.Abp.AspNetCore.VirtualFileSystem
             AllowedExtraWebContentFolders = new List<string>
             {
                 "/Pages",
-                "/Views"
+                "/Views",
+                "/Themes"
             };
 
             AllowedExtraWebContentFileExtensions = new List<string>
@@ -21,7 +22,11 @@ namespace Volo.Abp.AspNetCore.VirtualFileSystem
                 ".css",
                 ".png",
                 ".jpg",
-                ".jpeg"
+                ".jpeg",
+                ".woff",
+                ".woff2",
+                ".tff",
+                ".otf"
             };
         }
     }

@@ -19,7 +19,7 @@ namespace Volo.Abp.BackgroundJobs.DemoApp.HangFire
         public override void PreConfigureServices(ServiceConfigurationContext context)
         {
             var configuration = ConfigurationHelper.BuildConfiguration();
-            context.Services.AddConfiguration(configuration);
+            context.Services.SetConfiguration(configuration);
 
             context.Services.PreConfigure<IGlobalConfiguration>(hangfireConfiguration =>
             {
@@ -29,10 +29,11 @@ namespace Volo.Abp.BackgroundJobs.DemoApp.HangFire
 
         public override void OnApplicationInitialization(ApplicationInitializationContext context)
         {
-            context
-                .ServiceProvider
-                .GetRequiredService<ILoggerFactory>()
-                .AddConsole(LogLevel.Debug);
+            //TODO: Configure console logging
+            //context
+            //    .ServiceProvider
+            //    .GetRequiredService<ILoggerFactory>()
+            //    .AddConsole(LogLevel.Debug);
         }
     }
 }
